@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/tx
+            http://www.springframework.org/schema/tx/spring-tx.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd ">
+    <!--自动扫描，注入@Service,@Repository,@Component注解bean，并管理其关联-->
+    <context:component-scan base-package="com.recharge_cash"/>
+    <context:annotation-config/>
+    <!--1、引入db.properties-->
+    <bean id="propertyConfiger"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:config/db.properties"/>
+    </bean>
+    <!--2、数据源连接数据库-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+        <property name="driverClassName" value="${driver}"/>
+        <property name="url" value="${url}"/>
+        <property name="username" value="${username}"/>
+        <property name="password" value="${password}"/>
+        <property name="filters" value="${filters}" />
+        <!--定义初始连接数-->
+        <property name="initialSize" value="${initialSize}"/>
+        <!--定义最大连接数-->
+        <property name="maxActive" value="${maxActive}"/>
+        <!--定义最小空闲-->
+        <property name="minIdle" value="${minIdle}"/>
+        <!--定义最长等待时间-->
+        <property name="maxWait" value="${maxWait}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis" value="${timeBetweenEvictionRunsMillis}" />
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis" value="${minEvictableIdleTimeMillis}" />
+        <property name="validationQuery" value="${validationQuery}" />
+        <property name="testWhileIdle" value="${testWhileIdle}" />
+        <property name="testOnBorrow" value="${testOnBorrow}" />
+        <property name="testOnReturn" value="${testOnReturn}" />
+        <property name="maxOpenPreparedStatements" value="${maxOpenPreparedStatements}" />
+        <!-- 打开removeAbandoned功能 -->
+        <property name="removeAbandoned" value="${removeAbandoned}" />
+        <!-- 1800秒，也就是30分钟 -->
+        <property name="removeAbandonedTimeout" value="${removeAbandonedTimeout}" />
+        <!-- 关闭abanded连接时输出错误日志 -->
+        <property name="logAbandoned" value="${logAbandoned}" />
+        <property name="connectionInitSqls" value="set names utf8mb4;"/>
+    </bean>
+    <!--3、创建sqlSessionFactory,生成sqlSession-->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--2.1数据源信息-->
+        <property name="dataSource" ref="dataSource"/>
+        <!--2.2映射信息-->
+        <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+        <!--配置分页插件-->
+        <!--reasonable：分页合理化参数，默认值为false。
+                当该参数设置为 true 时，pageNum<=0 时会查询第一页，
+                pageNum>pages（超过总数时），会查询最后一页。
+                默认false 时，直接根据参数进行查询。-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageHelper">
+                    <property name="properties">
+                        <value>
+                            dialect=mysql
+                            reasonable=true
+                        </value>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+    <!--4、扫描dao所在的包，spring会自动查找其下的类-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--扫描dao,生成@Mapper注解的接口bean-->
+        <property name="basePackage" value="com.recharge_cash.dao"/>
+        <!--将接口bean纳入sqlSessionFactory工厂管理-->
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+    <!--5、配置JDBC事务管理-->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--5 配置基于注解的声明式事务-->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <mvc:annotation-driven />
+</beans>

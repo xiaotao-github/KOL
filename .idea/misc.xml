@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="FrameworkDetectionExcludesConfiguration">
+    <file type="web" url="file://$PROJECT_DIR$/kol-advertisement" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-coin" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-friends" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-game" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-home" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-recharge_cash" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-room" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-showPage" />
+    <file type="web" url="file://$PROJECT_DIR$/kol-user" />
+  </component>
+  <component name="MavenProjectsManager">
+    <option name="originalFiles">
+      <list>
+        <option value="$PROJECT_DIR$/pom.xml" />
+      </list>
+    </option>
+    <option name="ignoredFiles">
+      <set>
+        <option value="$PROJECT_DIR$/kol-showPage/pom.xml" />
+      </set>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>

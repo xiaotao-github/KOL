@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_room.dao.RoomDao">
+    <sql id="fields">
+        id,room_name,room_topic,room_label,username,time,create_time,state,room_position,room_image,room_notice,room_limit,room_type
+    </sql>
+    <sql id="tablename">
+        room
+    </sql>
+    <resultMap id="roomMap" type="com.kol_room.dto.Room">
+        <result property="id" column="id"/>
+        <result property="room_name" column="room_name"/>
+        <result property="room_topic" column="room_topic"/>
+        <result property="room_label" column="room_label"/>
+        <result property="username" column="username"/>
+        <result property="time" column="time"/>
+        <result property="create_time" column="create_time"/>
+        <result property="state" column="state"/>
+        <result property="room_limit" column="room_limit"/>
+        <result property="room_type" column="room_type"/>
+        <result property="room_position" column="room_position"/>
+        <result property="room_image" column="room_image" />
+        <result property="room_notice" column="room_notice" />
+    </resultMap>
+
+    <resultMap id="RoomInfosMap" type="com.kol_room.dto.RoomInfos">
+        <result property="roomId" column="roomId"/>
+        <result property="roomName" column="roomName"/>
+        <result property="uid" column="uid"/>
+        <result property="avatar" column="avatar" />
+        <result property="signature" column="signature" />
+    </resultMap>
+
+    <!--房间设置-->
+    <update id="updateRoom" parameterType="java.util.Map">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="room_name!=null">
+                room_name=#{room_name},
+            </if>
+            <if test="room_topic!=null">
+                room_topic =#{room_topic},
+            </if>
+            <if test="room_limit!=null">
+                room_limit=#{room_limit},
+            </if>
+            <if test="room_label!=null">
+                room_label=#{room_label},
+            </if>
+            <if test="room_notice!=null">
+                room_notice=#{room_notice},
+            </if>
+            <if test="room_image!=null">
+                room_image=#{room_image},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <!--模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="roomMap">
+        SELECT
+        <include refid="fields" />
+        FROM
+        room
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="room_name!=null">
+                and room_name like concat(concat('%',#{room_name}),'%')
+            </if>
+            <if test="username!=null">
+                and username like concat(concat('%',#{username}),'%')
+            </if>
+        </where>
+    </select>
+    <!--精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="roomMap">
+        SELECT
+        <include refid="fields" />
+        FROM
+        <include refid="tablename" />
+        WHERE id=#{id}
+    </select>
+    <!--添加功能-->
+    <insert id="add" parameterType="com.kol_room.dto.Room">
+        INSERT INTO
+         <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="room_name!=null">
+                room_name,
+            </if>
+            <if test="room_topic!=null">
+                room_topic,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="time!=null">
+                time,
+            </if>
+            <if test="create_time!=null">
+                create_time,
+            </if>
+            <if test="room_position!=null">
+                room_position,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="room_name!=null">
+                #{room_name},
+            </if>
+            <if test="room_topic!=null">
+                #{room_topic},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="time!=null">
+                #{time},
+            </if>
+            <if test="create_time!=null">
+                #{create_time},
+            </if>
+            <if test="room_position!=null">
+                #{room_position},
+            </if>
+        </trim>
+    </insert>
+
+    <!--创建房间 添加功能-->
+    <insert id="createRoom" parameterType="com.kol_room.dto.Room">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="room_name!=null">
+                room_name,
+            </if>
+            <if test="room_topic!=null">
+                room_topic,
+            </if>
+            <if test="room_label!=null">
+                room_label,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="time!=null">
+                time,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+            <if test="room_position!=null">
+                room_position,
+            </if>
+            <if test="room_image!=null">
+                room_image,
+            </if>
+            <if test="room_notice!=null">
+                room_notice,
+            </if>
+            <if test="room_limit!=null">
+                room_limit,
+            </if>
+            <if test="room_type!=null">
+                room_type,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="room_name!=null">
+                #{room_name},
+            </if>
+            <if test="room_topic!=null">
+                #{room_topic},
+            </if>
+            <if test="room_label!=null">
+                #{room_label},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="time!=null">
+                #{time},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+            <if test="room_position!=null">
+                #{room_position},
+            </if>
+            <if test="room_image!=null">
+                #{room_image},
+            </if>
+            <if test="room_notice!=null">
+                #{room_notice},
+            </if>
+            <if test="room_limit!=null">
+                #{room_limit},
+            </if>
+            <if test="room_type!=null">
+                #{room_type},
+            </if>
+        </trim>
+    </insert>
+
+    <!--修改功能-->
+    <update id="update" parameterType="com.kol_room.dto.Room">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="room_name!=null">
+                room_name=#{room_name},
+            </if>
+            <if test="room_topic!=null">
+                room_topic =#{room_topic},
+            </if>
+            <if test="username!=null">
+                username =#{username},
+            </if>
+            <if test="time!=null">
+                time =#{time},
+            </if>
+            <if test="create_time!=null">
+                create_time=#{create_time},
+            </if>
+            <if test="state!=null">
+                state= #{state},
+            </if>
+            <if test="room_type!=null">
+                room_type=#{room_type},
+            </if>
+            <if test="room_position!=null">
+                room_position= #{room_position},
+            </if>
+            <if test="room_image!=null">
+                room_image=#{room_image},
+            </if>
+            <if test="room_notice!=null">
+                room_notice=#{room_notice},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM room WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectRoomList" resultMap="roomMap">
+        select
+        <include refid="fields"/>
+        from
+        room
+        where
+        room_label=#{label} and room_limit=2 and state = 1
+        order by room_position
+    </select>
+
+    <select id="selectRoomAllList" resultMap="roomMap">
+        select
+        <include refid="fields"/>
+        from
+        room
+        where
+        room_limit=2 and state = 1
+        order by room_position
+    </select>
+
+
+    <!--首页的模糊搜索-->
+    <select id="searchRoomByKeyWord" parameterType="java.lang.String" resultMap="RoomInfosMap">
+        SELECT A.id as uid,B.id as roomId,introduction as signature,user_image as avatar,B.room_name as roomName
+        FROM user.`user` A
+        right join
+        (
+        SELECT id,room_name
+        FROM
+        room
+        WHERE id LIKE concat(concat('%',#{param2}),'%') OR room_name LIKE concat(concat('%',#{param2}),'%')
+        )B
+        on A.id = B.id
+    </select>
+</mapper>

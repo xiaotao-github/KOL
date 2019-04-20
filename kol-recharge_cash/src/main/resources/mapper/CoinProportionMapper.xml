@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.recharge_cash.dao.CoinProportionDao">
+    <sql id="fields">
+        id,date,coin_price,coin_amount,cash_money,editor
+    </sql>
+    <sql id="tablename">
+        coin_proportion
+    </sql>
+    <resultMap id="coinProportionMap" type="com.recharge_cash.dto.CoinProportion">
+        <result property="id" column="id"/>
+        <result property="date" column="date"/>
+        <result property="coin_price" column="coin_price"/>
+        <result property="coin_amount" column="coin_amount"/>
+        <result property="cash_money" column="cash_money"/>
+        <result property="editor" column="editor"/>
+    </resultMap>
+
+    <!--模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="coinProportionMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        coin_proportion
+    </select>
+    <!--精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="coinProportionMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        coin_proportion
+        WHERE id=#{id}
+    </select>
+    <!--添加功能-->
+    <insert id="add" parameterType="com.recharge_cash.dto.CoinProportion">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="date!=null">
+                date,
+            </if>
+            <if test="coin_price!=null">
+                coin_price,
+            </if>
+            <if test="coin_amount!=null">
+                coin_amount,
+            </if>
+            <if test="cash_money!=null">
+                cash_money,
+            </if>
+            <if test="editor!=null">
+                editor,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="date!=null">
+                #{date},
+            </if>
+            <if test="coin_price!=null">
+                #{coin_price},
+            </if>
+            <if test="coin_amount!=null">
+                #{coin_amount},
+            </if>
+            <if test="cash_money!=null">
+                #{cash_money},
+            </if>
+            <if test="editor!=null">
+                #{editor},
+            </if>
+        </trim>
+    </insert>
+    <!--修改功能-->
+    <update id="update" parameterType="com.recharge_cash.dto.CoinProportion">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="coin_price!=null">
+                coin_price=#{coin_price},
+            </if>
+            <if test="coin_amount!=null">
+                coin_amount =#{coin_amount},
+            </if>
+            <if test="editor!=null">
+                editor =#{editor},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <delete id="delete">
+        DELETE FROM coin_proportion WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

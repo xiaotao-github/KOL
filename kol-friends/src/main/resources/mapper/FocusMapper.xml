@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_friends.dao.FocusDao">
+    <sql id="fields">
+        id,user_id,focus_id,focus_time
+    </sql>
+    <sql id="tablename">
+        focus
+    </sql>
+    <resultMap id="FocusMap" type="com.kol_friends.dto.Focus">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="focus_id" column="focus_id"/>
+        <result property="focus_time" column="focus_time" />
+    </resultMap>
+    <resultMap id="UserFocusMap" type="com.kol_friends.dto.User">
+        <result property="uid" column="id"/>
+        <result property="name" column="username"/>
+        <result property="signature" column="introduction"/>
+        <result property="avatar" column="user_image" />
+    </resultMap>
+    <!--关注列表(关注列表ID)-->
+    <select id="getFocusList"
+            resultType="java.lang.String">
+        SELECT
+        focus_id
+        FROM
+        <include refid="tablename"/>
+        <where>
+            user_id=#{user_id}
+        </where>
+    </select>
+
+    <select id="getOnlyFocus" resultMap="FocusMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            <!--此处注意了，MyBatis3在使用select节点查询时传递多个参数的问题，第一个是parameterType是要去掉的第二个是#{id}...及后面的参数写法也是错误的-->
+            <!--需要把user_id=#{user_id} 和 friends_id=#{friends_id} 改为如下数据-->
+            user_id=#{param1} and focus_id=#{param2}
+        </where>
+    </select>
+
+    <!--添加关注-->
+    <insert id="add" parameterType="com.kol_friends.dto.Focus">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="focus_id!=null">
+                focus_id,
+            </if>
+            <if test="focus_time!=null">
+                focus_time,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="focus_id!=null">
+                #{focus_id},
+            </if>
+            <if test="focus_time!=null">
+                #{focus_time},
+            </if>
+        </trim>
+    </insert>
+
+    <!--取消关注-->
+    <update id="cencelFocus">
+        delete from
+        <include refid="tablename"/>
+        <where>
+            <!--此处注意了，MyBatis3在使用select节点查询时传递多个参数的问题，第一个是parameterType是要去掉的第二个是#{id}...及后面的参数写法也是错误的-->
+            <!--需要把user_id=#{user_id} 和 focus_id=#{focus_id} 改为如下数据-->
+            user_id=#{param1} and focus_id=#{param2}
+        </where>
+    </update>
+
+
+    <!--提供搜索ID或关键字列表（模糊查询）-->
+    <select id="getFocusListByWord"
+            resultMap="FocusMap">
+        SELECT focus_id
+        FROM
+        (SELECT
+        focus_id
+        FROM
+        friends.`focus`
+        WHERE  user_id=#{param1}
+        )A
+        RIGHT JOIN
+        (SELECT id FROM user.`user` WHERE id LIKE concat(concat('%',#{param2}),'%') OR username LIKE concat(concat('%',#{param2}),'%'))B
+        ON A.focus_id=B.id
+        WHERE focus_id IS NOT NULL
+    </select>
+
+    <!--获取用户基本信息-->
+    <select id="getUserMessage" resultMap="UserFocusMap">
+        SELECT
+        id,username,introduction,user_image
+        FROM
+        user.`user`
+        <where>
+            id=#{id}
+        </where>
+    </select>
+
+    <!---->
+    <select id="addFocusListByWord"
+            resultType="java.lang.String">
+        SELECT
+        id
+        FROM
+        kol_user.`user`
+        <where>
+            id LIKE concat(concat('%',#{keyword}),'%') OR username LIKE concat(concat('%',#{keyword}),'%')
+        </where>
+    </select>
+
+</mapper>

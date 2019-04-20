@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd"
+
+>
+    <!--<context:property-placeholder location="classpath*:config.properties"/>-->
+    <dubbo:application name="room" />
+
+    <!--<dubbo:registry protocol="zookeeper" address="192.168.12.94:2181" />-->
+    <dubbo:registry protocol="zookeeper" address="129.204.52.213:2181" />
+
+    <dubbo:protocol accesslog="true" name="dubbo" port="20882" />
+
+    <!--<dubbo:annotation package="com.kol_user.service" />-->
+
+    <!--<dubbo:service interface="com.kol_user.service.testDubboService" ref="testDubboServiceImpl"/>-->
+    <!--<bean id="testDubboServiceImpl" class="com.kol_user.service.testDubboServiceImpl"></bean>-->
+    <!--提供者-->
+    <dubbo:service interface="com.kol_room.service.UserRoomService" ref="userRoomServiceImpl"/>
+    <bean id="userRoomServiceImpl" class="com.kol_room.service.UserRoomServiceImpl"></bean>
+
+    <!--消费者-->
+    <dubbo:reference interface="com.coin.service.GiftOrderService" id="giftOrderServiceImpl" />
+    <dubbo:reference interface="com.kol_user.service.UserService" id="userServiceImpl" />
+    <dubbo:reference interface="com.kol_friends.service.FocusService" id="focusService" />
+    <dubbo:reference interface="com.kol_friends.service.IntimacyService" id="intimacyServiceImpl" />
+    <!--<context:component-scan base-package="jim" />-->
+    <!--<import resource="redis-context.xml"/>-->
+
+</beans>

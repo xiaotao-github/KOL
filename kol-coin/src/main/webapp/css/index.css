@@ -1,0 +1,109 @@
+.left{
+	float: left;
+	height: 100%;
+	min-height: 940px;
+    z-index: 10;
+	background-color: #1674d8;
+}
+.left .sidebar{
+    position: absolute;
+    top: 45%;
+}
+.left .sidebar li{
+   font-size: 20px;
+   font-weight:bold;
+   color: white;
+   list-style-type:none;
+}
+.left .sidebar ul li a{
+    color:white;
+	text-decoration:none;
+}
+.right{
+    float: right;
+}
+.right .right_content{
+    height: 800px;
+    margin-right: auto; margin-left: auto;
+    /*margin-top: auto;margin-bottom: auto;*/
+    margin-top: 50px;
+    /*background-color: #ffc107;*/
+}
+.right .searchwords{
+	width: 100%;
+}
+.right .searchwords ul:first-child{
+    margin-left: 25px;
+}
+.right .searchwords .search > li{
+	list-style-type:none; 
+	float: left;
+	margin: 0px 20px;
+}
+.right .insert{
+    width: 1200px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.insert .insert_button{
+    /*background-color: #999;*/
+    margin-bottom: 10px;
+    clear: both;
+}
+.right .content{
+    width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.right .content table{
+	width: 1200px;
+}
+.delete input{
+    float: left;
+}
+.delete button{
+    float: right;
+}
+.insert_content{
+	display: none;
+	position: absolute;
+	top: 25%;
+	left: 25%;
+	width: 400px;
+	height: 500px;
+	padding: 20px;
+	/*border: 10px solid orange;*/
+    border: 5px solid #ccc;
+	background-color: white;
+	z-index:100;
+	overflow: auto;
+}
+.update_content{
+    display: none;
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    width: 400px;
+    height: 500px;
+    padding: 20px;
+    /*border: 10px solid orange;*/
+    border: 5px solid #ccc;
+    background-color: white;
+    z-index:100;
+    overflow: auto;
+}
+#right_navigation ul li a:hover{
+    display: block;
+    background-image: url("/image/b.png");
+    color:#000000;
+}
+
+#update_form div span {
+    color: #1674d8;
+}
+#insert_form div span {
+    color: #1674d8;
+}
+/*#update_form div {*/
+    /*text-align: center;*/
+/*}*/

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_user.dao.UserBackstageDao">
+    <sql id="fields">
+        id,username,password,sex,introduction,telephone,user_image,register_time,position,
+        login_time,identity_type,identity_id,user_status,state
+    </sql>
+    <sql id="tablename">
+        user
+    </sql>
+    <resultMap id="UserMap" type="com.kol_user.dto.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="sex" column="sex" />
+        <result property="introduction" column="introduction" />
+        <result property="telephone" column="telephone" />
+        <!--<result property="remarks_name" column="remarks_name" />-->
+        <result property="user_image" column="user_image" />
+        <result property="register_time" column="register_time" />
+        <result property="position" column="position" />
+        <result property="login_time" column="login_time" />
+        <result property="identity_type" column="identity_type" />
+        <result property="identity_id" column="identity_id" />
+        <result property="user_status" column="user_status" />
+        <result property="state" column="state" />
+        <!--<result property="background_image" column="background_image" />-->
+    </resultMap>
+
+    <!--后台模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="UserMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        user
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="username!=null">
+                and username like concat(concat('%',#{username}),'%')
+            </if>
+            <if test="sex!=null">
+                and sex=#{sex}
+            </if>
+            <if test="identity_type!=null">
+                and identity_type=#{identity_type}
+            </if>
+            <if test="user_status!=null">
+                and user_status=#{user_status}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+    </select>
+    <!--后台精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="UserMap">
+        SELECT
+        id,username,sex,introduction,telephone,register_time,identity_type,identity_type,user_status
+        FROM
+        user
+        WHERE id=#{id}
+    </select>
+    <!--后台添加功能-->
+    <insert id="add" parameterType="com.kol_user.dto.User">
+        INSERT INTO
+        <include refid="tablename"/>
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="password!=null">
+                password,
+            </if>
+            <if test="sex!=null">
+                sex,
+            </if>
+            <if test="introduction!=null">
+                introduction,
+            </if>
+            <if test="telephone!=null">
+                telephone,
+            </if>
+            <if test="user_image!=null">
+                user_image,
+            </if>
+            <if test="identity_type!=null">
+                identity_type,
+            </if>
+            <if test="user_status!=null">
+                user_status,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="password!=null">
+                #{password},
+            </if>
+            <if test="sex!=null">
+                #{sex},
+            </if>
+            <if test="introduction!=null">
+                #{introduction},
+            </if>
+            <if test="telephone!=null">
+                #{telephone},
+            </if>
+            <if test="user_image!=null">
+                #{user_image},
+            </if>
+            <if test="identity_type!=null">
+                #{identity_type},
+            </if>
+            <if test="user_status!=null">
+                #{user_status},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+        </trim>
+    </insert>
+    <!--后台修改功能-->
+    <update id="update" parameterType="com.kol_user.dto.User">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="password!=null">
+                password =#{password},
+            </if>
+            <if test="sex!=null">
+                sex =#{sex},
+            </if>
+            <if test="introduction!=null">
+                introduction =#{introduction},
+            </if>
+            <if test="telephone!=null">
+                telephone=#{telephone},
+            </if>
+            <if test="user_image!=null">
+                user_image= #{user_image},
+            </if>
+            <if test="identity_type!=null">
+                identity_type=#{identity_type},
+            </if>
+            <if test="user_status!=null">
+                user_status= #{user_status},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <!--后台删除，此处为物理删除-->
+    <update id="delete" parameterType="java.lang.String">
+        DELETE FROM
+        <include refid="tablename"/>
+        WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

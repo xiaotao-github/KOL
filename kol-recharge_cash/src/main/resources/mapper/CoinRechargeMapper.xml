@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.recharge_cash.dao.CoinRechargeDao">
+
+    <!--X币比例-->
+    <resultMap id="coinRechargeMap" type="com.recharge_cash.dto.CoinRecharge">
+        <result property="rechargeId" column="id"/>
+        <result property="coin_price" column="coin_price"/>
+        <result property="coin_amount" column="coin_amount"/>
+    </resultMap>
+
+    <!--金币充值界面列表-->
+    <select id="coinRecharge" resultMap="coinRechargeMap">
+        select
+        id as rechargeId,coin_price,coin_amount
+        from
+        recharge_cash.`coin_proportion`
+    </select>
+
+    <!--根据档位id获取充值金额-->
+    <select id="coinRechargeById" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select
+        coin_price
+        from
+        recharge_cash.`coin_proportion`
+        where id=#{rechargeId}
+    </select>
+
+    <!--根据充值金额获取X币数量-->
+    <select id="coinRechargeByPrice" parameterType="java.lang.Integer" resultType="java.lang.Integer">
+        select
+        coin_amount
+        from
+        recharge_cash.`coin_proportion`
+        where coin_price=#{coin_price}
+    </select>
+</mapper>

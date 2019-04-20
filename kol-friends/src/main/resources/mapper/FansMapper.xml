@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_friends.dao.FansDao">
+    <sql id="fields">
+        id,user_id,fans_id,fans_time
+    </sql>
+    <sql id="tablename">
+        fans
+    </sql>
+    <resultMap id="FansMap" type="com.kol_friends.dto.Fans">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="fans_id" column="fans_id"/>
+        <result property="fans_time" column="fans_time" />
+    </resultMap>
+    <resultMap id="UserFansMap" type="com.kol_friends.dto.User">
+        <result property="uid" column="id"/>
+        <result property="name" column="username"/>
+        <result property="signature" column="introduction"/>
+        <result property="avatar" column="user_image" />
+    </resultMap>
+    <!--粉丝列表(粉丝列表ID)-->
+    <select id="getFansList"
+            resultType="java.lang.String">
+        SELECT
+        fans_id
+        FROM
+        <include refid="tablename"/>
+        <where>
+            user_id=#{user_id}
+        </where>
+    </select>
+
+    <select id="getOnlyFans" resultMap="FansMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            <!--此处注意了，MyBatis3在使用select节点查询时传递多个参数的问题，第一个是parameterType是要去掉的第二个是#{id}...及后面的参数写法也是错误的-->
+            <!--需要把user_id=#{user_id} 和 friends_id=#{friends_id} 改为如下数据-->
+            user_id=#{param1} and fans_id=#{param2}
+        </where>
+    </select>
+
+    <!--提供搜索ID或关键字列表（模糊查询）-->
+    <select id="getFansListByWord"
+            resultMap="FansMap">
+        SELECT fans_id
+        FROM
+        (SELECT
+        fans_id
+        FROM
+        friends.`fans`
+        WHERE  user_id=#{param1}
+        )A
+        RIGHT JOIN
+        (SELECT id FROM user.`user` WHERE id LIKE concat(concat('%',#{param2}),'%') OR username LIKE concat(concat('%',#{param2}),'%'))B
+        ON A.fans_id=B.id
+        WHERE fans_id IS NOT NULL
+    </select>
+
+    <!--获取用户基本信息-->
+    <select id="getUserMessage" resultMap="UserFansMap">
+        SELECT
+        id,username,introduction,user_image
+        FROM
+        user.`user`
+        <where>
+            id=#{id}
+        </where>
+    </select>
+
+    <!--添加粉丝-->
+    <insert id="add" parameterType="com.kol_friends.dto.Fans">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="fans_id!=null">
+                fans_id,
+            </if>
+            <if test="fans_time!=null">
+                fans_time,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="fans_id!=null">
+                #{fans_id},
+            </if>
+            <if test="fans_time!=null">
+                #{fans_time},
+            </if>
+        </trim>
+    </insert>
+
+    <!--删除粉丝-->
+    <update id="cancelFans">
+        delete from
+        <include refid="tablename"/>
+        <where>
+            <!--此处注意了，MyBatis3在使用select节点查询时传递多个参数的问题，第一个是parameterType是要去掉的第二个是#{id}...及后面的参数写法也是错误的-->
+            <!--需要把user_id=#{user_id} 和 focus_id=#{focus_id} 改为如下数据-->
+            user_id=#{param1} and fans_id=#{param2}
+        </where>
+    </update>
+
+</mapper>

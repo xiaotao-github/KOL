@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_friends.dao.MakeFriendsDao">
+    <sql id="fields">
+        id,user_id,friends_id,friends_time,intimacy_value
+    </sql>
+    <sql id="tablename">
+        friends_relation
+    </sql>
+    <resultMap id="MakeFriendsMap" type="com.kol_friends.dto.MakeFriends">
+        <result property="id" column="id"/>
+        <result property="user_id" column="user_id"/>
+        <result property="friends_id" column="friends_id"/>
+        <result property="friends_time" column="friends_time" />
+        <result property="intimacy_value" column="intimacy_value" />
+    </resultMap>
+    <!--好友列表(好友ID列表)-->
+    <select id="getFriendsList"
+            resultType="java.lang.String">
+        SELECT
+        friends_id
+        FROM
+        <include refid="tablename"/>
+        <where>
+            user_id=#{user_id}
+        </where>
+    </select>
+
+    <select id="getOnlyFriends" resultMap="MakeFriendsMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            <!--此处注意了，MyBatis3在使用select节点查询时传递多个参数的问题，第一个是parameterType是要去掉的第二个是#{id}...及后面的参数写法也是错误的-->
+            <!--需要把user_id=#{user_id} 和 friends_id=#{friends_id} 改为如下数据-->
+            user_id=#{param1} and friends_id=#{param2}
+        </where>
+    </select>
+    <!--根据电话号码精确查询功能-->
+    <!--<select id="findOneByTelephone" parameterType="java.lang.String"-->
+            <!--resultType="com.kol_friends.dto.Friends">-->
+        <!--SELECT-->
+        <!--<include refid="fields"/>-->
+        <!--FROM-->
+        <!--<include refid="tablename"/>-->
+        <!--<where>-->
+            <!--telephone=#{telephone}-->
+        <!--</where>-->
+    <!--</select>-->
+
+    <!--添加好友-->
+    <insert id="addFriends" parameterType="com.kol_friends.dto.MakeFriends">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="friends_id!=null">
+                friends_id,
+            </if>
+            <if test="friends_time!=null">
+                friends_time,
+            </if>
+            <if test="intimacy_value!=null">
+                intimacy_value,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="friends_id!=null">
+                #{friends_id},
+            </if>
+            <if test="friends_time!=null">
+                #{friends_time},
+            </if>
+            <if test="intimacy_value!=null">
+                #{intimacy_value},
+            </if>
+        </trim>
+    </insert>
+
+
+    <insert id="add" parameterType="com.kol_friends.dto.MakeFriends">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="friends_id!=null">
+                friends_id,
+            </if>
+            <if test="friends_time!=null">
+                friends_time,
+            </if>
+            <if test="intimacy_value!=null">
+                intimacy_value,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="friends_id!=null">
+                #{friends_id},
+            </if>
+            <if test="friends_time!=null">
+                #{friends_time},
+            </if>
+            <if test="intimacy_value!=null">
+                #{intimacy_value},
+            </if>
+        </trim>
+    </insert>
+    <!--更新操作-->
+    <update id="update" parameterType="com.kol_friends.dto.MakeFriends">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="id!=null">
+                id=#{id},
+            </if>
+            <if test="user_id!=null">
+                user_id =#{user_id},
+            </if>
+            <if test="friends_id!=null">
+                friends_id =#{friends_id},
+            </if>
+            <if test="friends_time!=null">
+                friends_time =#{friends_time},
+            </if>
+            <if test="intimacy_value!=null">
+                intimacy_value =#{intimacy_value},
+            </if>
+        </set>
+        WHERE user_id=#{user_id} and friends_id=#{friends_id}
+    </update>
+</mapper>

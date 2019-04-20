@@ -1,0 +1,324 @@
+/* 
+  daterangepicker start
+ */
+.daterangepicker-box {
+  position: relative;
+  width: 240px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.daterangepicker-box.single {
+  width: 150px;
+}
+.daterangepicker-box .icon-rili {
+  position: absolute;
+  left: 11px;
+  top: 2px;
+  font-size: 16px;
+  color: #888;
+  line-height: 33px;
+}
+.daterangepicker-box input {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 1;
+  padding-left: 30px;
+  padding-right: 30px;
+  display: block;
+  height: 100%;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #666;
+  text-align: center;
+}
+.daterangepicker-box:after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  top: 12px;
+  width: 8px;
+  height: 8px;
+  border-right: 1px solid #888;
+  border-bottom: 1px solid #888;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}
+.daterangepicker {
+  padding-right: 8px;
+}
+.daterangepicker.show-ranges .drp-calendar.left {
+  border-left: none;
+}
+.daterangepicker .drp-calendar.right {
+  padding-right: 0;
+}
+.daterangepicker .calendar-table {
+  border-radius: 4px !important;
+  border: 1px solid #EBEBEB !important;
+}
+.daterangepicker .calendar-table th {
+  border-radius: none;
+}
+.daterangepicker thead > tr:nth-child(1) {
+  height: 46px;
+}
+.daterangepicker thead > tr:nth-child(1) th select {
+  height: 26px;
+  vertical-align: middle;
+  border-color: #ebebeb;
+  border-radius: 4px;
+  color: #666;
+}
+.daterangepicker thead > tr:nth-child(2) {
+  background: #F8F8F8;
+  color: #838383;
+}
+.daterangepicker .calendar-table .next span,
+.daterangepicker .calendar-table .prev span {
+  border-width: 0 1px 1px 0;
+  border-color: #888888;
+}
+.daterangepicker td.in-range {
+  background: #FFEFE5;
+  color: #FF8644;
+}
+.daterangepicker td.available:hover,
+.daterangepicker th.available:hover {
+  background-color: #FFEFE5;
+}
+.daterangepicker td.active,
+.daterangepicker td.active:hover {
+  background-color: #FF9800;
+  color: #fff;
+}
+.daterangepicker .drp-buttons {
+  text-align: center;
+}
+.daterangepicker .drp-buttons .btn {
+  font-weight: normal;
+}
+.daterangepicker .drp-buttons .btn-default {
+  color: #666;
+}
+@media (min-width: 564px) {
+  .daterangepicker.ltr .drp-calendar.left .calendar-table {
+    padding-right: 0;
+  }
+  .daterangepicker.ltr .ranges ul {
+    width: 100%;
+  }
+  .daterangepicker.ltr .ranges ul li {
+    margin-left: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #ebebeb;
+    color: #666;
+    border-radius: 4px;
+  }
+  .daterangepicker.ltr .ranges ul li.active {
+    background: #FFEFE5;
+    border-color: #ffefe5;
+    color: #FF8644;
+  }
+}
+/* 
+  daterangepicker end
+*/
+/*
+  bootstrapSelect  start
+*/
+.bootstrap-select {
+  color: #666;
+}
+.btn-light {
+  height: 36px;
+  border: 1px solid #ddd;
+  background: #fff;
+  border-radius: 4px;
+  color: #666;
+}
+.bootstrap-select .btn-light:hover,
+.bootstrap-select .btn-light:active {
+  background-color: #FFEDE3;
+  border-color: #FF8644;
+  color: #FF8644;
+}
+.bootstrap-select .dropdown-menu li a:focus {
+  outline: none;
+}
+.bootstrap-select .dropdown-toggle:focus {
+  outline: none !important;
+}
+.btn-light:not(:disabled):not(.disabled).active,
+.btn-light:not(:disabled):not(.disabled):active,
+.show > .btn-light.dropdown-toggle {
+  background-color: #FFEDE3;
+  border-color: #FF8644;
+  color: #FF8644;
+}
+.bootstrap-select > .dropdown-toggle.bs-placeholder:active,
+.bootstrap-select > .dropdown-toggle.bs-placeholder:focus,
+.bootstrap-select > .dropdown-toggle.bs-placeholder:hover {
+  background-color: #fff;
+  color: #FF8644;
+}
+.dropdown-item:focus,
+.dropdown-item:hover {
+  color: #FF8644;
+  background-color: #FFEDE3;
+}
+.dropdown-item.active,
+.dropdown-item:active {
+  color: #FF8644;
+  background-color: #FFEDE3;
+}
+.btn-default.active,
+.btn-default:active,
+.open > .dropdown-toggle.btn-default {
+  background-color: #eee;
+}
+.bootstrap-select .dropdown-menu > li.selected a {
+  color: #FF8644;
+}
+.bootstrap-select .dropdown-menu .inner::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+  background: #EBEBEB;
+}
+.bootstrap-select .dropdown-menu .inner::-webkit-scrollbar-thumb {
+  background: #A7A7A7;
+  border-radius: 4px;
+}
+/*
+  bootstrapSelect end
+*/
+/* bootstrap modal start*/
+@media (min-width: 1200px) {
+  .modal-dialog.modal-full-width {
+    width: auto;
+  }
+  .modal-dialog.modal-xl {
+    width: 1170px;
+  }
+}
+/* bootstrap modal end*/
+/* bootstrap table start*/
+.bootstrap-table {
+  color: #666;
+}
+.bootstrap-table .table td,
+.bootstrap-table .table th {
+  border-top: none;
+  border-bottom: none;
+}
+.fixed-table-toolbar button i,
+.fixed-table-toolbar .caret {
+  color: #666;
+}
+.page-link {
+  color: #FF9800;
+}
+.page-link:hover {
+  color: #e47600;
+}
+.page-item.active .page-link,
+.pagination > .active > a:hover {
+  background-color: #FF9800;
+  border-color: #FF9800;
+}
+a.editable {
+  color: #f3955b;
+}
+.editable-click,
+a.editable-click,
+a.editable-click:hover {
+  border-bottom-color: #f3955b;
+}
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(234, 213, 200, 0.26);
+}
+.fixed-table-body .table {
+  border-bottom: none;
+  border-top: none;
+}
+.fixed-table-body::-webkit-scrollbar {
+  height: 4px;
+  width: 4px;
+  background: #EBEBEB;
+}
+.fixed-table-body::-webkit-scrollbar-thumb {
+  background: #A7A7A7;
+  border-radius: 4px;
+}
+.fixed-table-toolbar .fa {
+  color: #fff;
+}
+.fixed-table-footer .table-striped tbody tr:nth-of-type(odd) {
+  background-color: #fff;
+}
+.fixed-table-pagination .dropdown-toggle {
+  padding: 1px 6px;
+}
+/* bootstrap table end*/
+/* bootstrap editable start */
+a.editable-empty {
+  padding: 4px 6px;
+  background: #59c5b2;
+  color: #fff;
+}
+a.editable-empty,
+a.editable-empty:hover {
+  font-style: normal;
+  border-bottom: none;
+  color: #fff;
+  background: #59c5b2;
+}
+/* bootstrap editable end */
+.btn-default {
+  background: transparent;
+  border-color: #ebebeb;
+}
+.btn-primary-jianta {
+  background-color: #fff;
+  border: 1px solid #EBEBEB;
+  color: #838383;
+}
+.btn-primary-jianta:hover {
+  background: #FFEDE3;
+  border-color: #FFEDE3;
+}
+.btn-primary-jianta:active {
+  background: #FF8644;
+  border-color: #FF8644;
+  color: #fff;
+}
+.btn-primary {
+  background: #FF8644;
+  border-color: #FF8644;
+}
+.btn-primary:hover {
+  background: #FF8644;
+  border-color: #FF8644;
+}
+.btn-primary.focus,
+.btn-primary:focus {
+  background-color: #fd9054;
+  border-color: #fd9054;
+}
+.btn-primary:disabled,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show > .btn-primary.dropdown-toggle {
+  background: #FF8644;
+  border-color: #FF8644;
+}
+.form-control:focus {
+  border-color: #FF8644;
+  -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 134, 68, 0.25);
+  box-shadow: 0 0 0 0.2rem rgba(255, 134, 68, 0.25);
+}

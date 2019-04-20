@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.springframework.org/schema/context
+            http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/mvc
+            http://www.springframework.org/schema/mvc/spring-mvc.xsd
+            http://www.springframework.org/schema/aop
+            http://www.springframework.org/schema/aop/spring-aop.xsd ">
+    <!--springmvc的扫描包，识别@Controller,注册生成bean-->
+    <context:component-scan base-package="com.kol_friends.controller"/>
+    <!--生成驱动配置-->
+    <mvc:annotation-driven>
+        <mvc:message-converters register-defaults="true">
+            <!--配置bean，解决json数据传输中中文乱码的问题-->
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>text/html;charset=utf-8</value>
+                        <value>application/json;charset=utf-8</value>
+                    </list>
+                </property>
+            </bean>
+            <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--视图解析器配置-->
+    <bean id="viewResol" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!--前缀属性-->
+        <property name="prefix" value="/WEB-INF/views"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--文件上传配置-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="utf-8"></property>
+        <property name="maxUploadSize" value="10485760000"></property>
+        <property name="maxInMemorySize" value="40960"></property>
+    </bean>
+    <!--加载静态页面-->
+    <mvc:default-servlet-handler/>
+
+    <!--拦截器-->
+    <mvc:interceptors>
+        <mvc:interceptor>
+            <!--匹配的是url路径，如果不配置或/**，将拦截使用的controller-->
+            <mvc:mapping path="/**"/>
+            <!--静态资源-->
+            <mvc:exclude-mapping path="/layui/**"/>
+            <mvc:exclude-mapping path="/css/**"/>
+            <!--/Message不需要拦截-->
+            <mvc:exclude-mapping path="/Message/*" />
+            <bean id="loginInterceptor" class="com.kol_friends.controller.LoginInterceptor"></bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+</beans>

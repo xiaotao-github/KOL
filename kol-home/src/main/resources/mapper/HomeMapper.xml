@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.home.dao.HomeDao">
+    <sql id="fields">
+        id,content_title,introduction,number,works_url,works_image,issuer,state
+    </sql>
+    <sql id="tablename">
+        home
+    </sql>
+    <!--后台管理-->
+    <resultMap id="homeMap" type="com.home.dto.Home">
+        <result property="id" column="id"/>
+        <result property="content_title" column="content_title"/>
+        <result property="introduction" column="introduction"/>
+        <result property="number" column="number"/>
+        <result property="works_url" column="works_url"/>
+        <result property="works_image" column="works_image"/>
+        <result property="issuer" column="issuer"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <!--首页轮播图展示-->
+    <resultMap id="FlashViewMap" type="com.home.dto.FlashView">
+        <result property="id" column="id"/>
+        <result property="imageUrl" column="imageUrl"/>
+        <result property="link" column="link"/>
+    </resultMap>
+
+
+    <!--模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="homeMap">
+        SELECT
+        id,content_title,introduction,number,works_url,works_image,issuer,state
+        FROM
+        home
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="content_title!=null">
+                and content_title like concat(concat('%',#{content_title}),'%')
+            </if>
+            <if test="type!=null">
+                and type=#{type}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <if test="issuer!=null">
+                and issuer=#{issuer}
+            </if>
+        </where>
+    </select>
+    <!--精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="homeMap">
+        SELECT
+       id,content_title,introduction,number,works_url,works_image,issuer,state
+        FROM
+        home
+        WHERE id=#{id}
+    </select>
+    <!--添加功能-->
+    <insert id="add" parameterType="com.home.dto.Home">
+        INSERT INTO
+        <!--<include refid="tablename"/>-->
+        home
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="content_title!=null">
+                content_title,
+            </if>
+            <if test="introduction!=null">
+                introduction,
+            </if>
+            <if test="number!=null">
+                number,
+            </if>
+            <if test="works_url!=null">
+                works_url,
+            </if>
+            <if test="works_image!=null">
+                works_image,
+            </if>
+            <if test="issuer!=null">
+                issuer,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="content_title!=null">
+                #{content_title},
+            </if>
+            <if test="introduction!=null">
+                #{introduction},
+            </if>
+            <if test="number!=null">
+                #{number},
+            </if>
+            <if test="works_url!=null">
+                #{works_url},
+            </if>
+            <if test="works_image!=null">
+                #{works_image},
+            </if>
+            <if test="issuer!=null">
+                #{issuer},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+        </trim>
+    </insert>
+    <!--修改功能-->
+    <update id="update" parameterType="com.home.dto.Home">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="content_title!=null">
+                content_title=#{content_title},
+            </if>
+            <if test="introduction!=null">
+                introduction= #{introduction},
+            </if>
+            <if test="number!=null">
+                number= #{number},
+            </if>
+            <if test="works_url!=null">
+                works_url =#{works_url},
+            </if>
+            <if test="works_image!=null">
+                works_image=#{works_image},
+            </if>
+            <if test="issuer!=null">
+                issuer= #{issuer},
+            </if>
+            <if test="state!=null">
+                state= #{state},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <!--删除-->
+    <delete id="delete">
+        DELETE FROM home WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--首页轮播图展示-->
+    <select id="flashView"
+            resultMap="FlashViewMap">
+        SELECT
+        id,works_url as link,works_image as imageUrl
+        FROM
+        home
+        WHERE state=1
+        order by number
+        limit 10
+    </select>
+</mapper>

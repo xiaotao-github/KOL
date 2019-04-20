@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.coin.dao.RankingListDao">
+    <sql id="fields">
+        uid,totalCharm,weekCharm,totalContribution,weekContribution
+    </sql>
+    <sql id="tablename">
+        ranking_list
+    </sql>
+
+    <!--精确查询-->
+    <select id="selectOneByUid" parameterType="java.lang.String"
+            resultType="map">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        ranking_list
+        WHERE uid=#{uid}
+    </select>
+
+    <!--添加功能-->
+    <insert id="insert" parameterType="map">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uid!=null">
+                uid,
+            </if>
+            <if test="totalCharm!=null">
+                totalCharm,
+            </if>
+            <if test="weekCharm!=null">
+                weekCharm,
+            </if>
+            <if test="totalContribution!=null">
+                totalContribution,
+            </if>
+            <if test="weekContribution!=null">
+                weekContribution,
+            </if>
+        </trim>
+
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="uid!=null">
+                #{uid},
+            </if>
+            <if test="totalCharm!=null">
+                #{totalCharm},
+            </if>
+            <if test="weekCharm!=null">
+                #{weekCharm},
+            </if>
+            <if test="totalContribution!=null">
+                #{totalContribution},
+            </if>
+            <if test="weekContribution!=null">
+                #{weekContribution},
+            </if>
+        </trim>
+    </insert>
+
+    <!--修改功能-->
+    <update id="update" parameterType="map">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="totalCharm!=null">
+                totalCharm=#{totalCharm},
+            </if>
+            <if test="weekCharm!=null">
+                weekCharm=#{weekCharm},
+            </if>
+            <if test="totalContribution!=null">
+                totalContribution=#{totalContribution},
+            </if>
+            <if test="weekContribution!=null">
+                weekContribution=#{weekContribution},
+            </if>
+        </set>
+        WHERE uid=#{uid}
+    </update>
+    <!--删除-->
+    <delete id="delete">
+        DELETE FROM ranking_list WHERE uid=#{uid}
+    </delete>
+</mapper>

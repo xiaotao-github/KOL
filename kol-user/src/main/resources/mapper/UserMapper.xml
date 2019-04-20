@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.kol_user.dao.UserDao">
+    <sql id="fields">
+        id,username,password,sex,introduction,telephone,user_image,register_time,position,
+        login_time,identity_type,identity_id,user_status,state,user_type,height,age,hobby
+    </sql>
+    <sql id="tablename">
+        user
+    </sql>
+    <resultMap id="UserMap" type="com.kol_user.dto.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="sex" column="sex" />
+        <result property="introduction" column="introduction" />
+        <result property="telephone" column="telephone" />
+        <result property="user_image" column="user_image" />
+        <result property="register_time" column="register_time" />
+        <result property="position" column="position" />
+        <result property="login_time" column="login_time" />
+        <result property="identity_type" column="identity_type" />
+        <result property="identity_id" column="identity_id" />
+        <result property="user_status" column="user_status" />
+        <result property="state" column="state"/>
+        <result property="user_type" column="user_type"/>
+        <result property="height" column="height"/>
+        <result property="age" column="age"/>
+        <result property="hobby" column="hobby"/>
+    </resultMap>
+
+    <!--返回用户基本信息-->
+    <resultMap id="UserInfosMap" type="com.kol_user.dto.UserInfos">
+        <result property="uid" column="uid"/>
+        <result property="name" column="name"/>
+        <result property="avatar" column="avatar" />
+        <result property="signature" column="signature" />
+    </resultMap>
+
+    <!--举报信息-->
+    <resultMap id="ReportInformationMap" type="com.kol_user.dto.ReportInformation">
+        <result property="id" column="id"/>
+        <result property="uid" column="uid"/>
+        <result property="report_id" column="report_id"/>
+        <result property="type" column="type" />
+        <result property="describe" column="describe" />
+        <result property="image1" column="image1"/>
+        <result property="image2" column="image2"/>
+        <result property="image3" column="image3"/>
+        <result property="telephone" column="telephone" />
+        <result property="QQ" column="QQ" />
+        <result property="time" column="time" />
+    </resultMap>
+
+
+    <!--查询用户备注信息-->
+    <select id="searchUserRemark" parameterType="java.lang.String"
+            resultType="com.kol_user.dto.Remark">
+        SELECT
+        user_id,uid,remark
+        FROM
+        user_remark
+        <where>
+            user_id=#{param1} and uid=#{param2}
+        </where>
+    </select>
+
+    <!--添加用户备注信息-->
+    <insert id="addRemark" parameterType="com.kol_user.dto.Remark">
+        INSERT INTO
+        user_remark
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="uid!=null">
+                uid,
+            </if>
+            <if test="remark!=null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="uid!=null">
+                #{uid},
+            </if>
+            <if test="remark!=null">
+                #{remark},
+            </if>
+        </trim>
+    </insert>
+
+    <!--更新用户备注-->
+    <update id="updateRemark" parameterType="com.kol_user.dto.Remark">
+        update
+        user_remark
+        <set>
+            <if test="remark!=null">
+                remark=#{remark},
+            </if>
+        </set>
+        where user_id=#{user_id} and uid=#{uid}
+    </update>
+
+
+    <!--返回房间信息（垮库）-->
+    <select id="findRoomById" parameterType="java.lang.String"
+            resultType="com.kol_user.dto.Room">
+        SELECT
+        id
+        FROM
+        room.room
+        <where>
+            id=#{roomId}
+        </where>
+    </select>
+
+    <!--修改用户昵称时修改房间表的用户昵称-->
+    <update id="updateRoomUsername" parameterType="com.kol_user.dto.Room">
+        update
+        room.room
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+
+    <select id="findByProp" parameterType="java.util.Map" resultMap="UserMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        user
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="username!=null">
+                and username like concat(concat('%',#{username}),'%')
+            </if>
+            <if test="sex!=null">
+                and sex=#{sex}
+            </if>
+            <if test="identity_type!=null">
+                and identity_type=#{identity_type}
+            </if>
+            <if test="user_status!=null">
+                and user_status=#{user_status}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+        </where>
+    </select>
+    <!--实现按属性精确查询功能-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultType="com.kol_user.dto.User">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            id=#{id}
+        </where>
+    </select>
+
+    <!--根据identity_id查询是否存在此用户，返回user信息-->
+    <select id="findOneByIdentityId" parameterType="java.lang.String"
+            resultType="com.kol_user.dto.User">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            identity_id=#{identityId}
+        </where>
+    </select>
+    <!--根据电话号码精确查询功能-->
+    <select id="findOneByTelephone" parameterType="java.lang.String"
+            resultType="com.kol_user.dto.User">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            telephone=#{telephone}
+        </where>
+    </select>
+
+    <!--添加用户-->
+    <insert id="add" parameterType="com.kol_user.dto.User">
+        INSERT INTO
+        <!--<include refid="tablename"/>-->
+        user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="password!=null">
+                password,
+            </if>
+            <if test="sex!=null">
+                sex,
+            </if>
+            <if test="introduction!=null">
+                introduction,
+            </if>
+            <if test="telephone!=null">
+                telephone,
+            </if>
+            <if test="user_image!=null">
+                user_image,
+            </if>
+            <if test="register_time!=null">
+                register_time,
+            </if>
+            <if test="position!=null">
+                position,
+            </if>
+            <if test="login_time!=null">
+                login_time,
+            </if>
+            <if test="identity_type!=null">
+                identity_type,
+            </if>
+            <if test="identity_id!=null">
+                identity_id,
+            </if>
+            <if test="user_status!=null">
+                user_status,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+            <if test="user_type!=null">
+                user_type,
+            </if>
+            <if test="height!=null">
+                height,
+            </if>
+            <if test="age!=null">
+                age,
+            </if>
+            <if test="hobby!=null">
+                hobby,
+            </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="password!=null">
+                #{password},
+            </if>
+            <if test="sex!=null">
+                #{sex},
+            </if>
+            <if test="introduction!=null">
+                #{introduction},
+            </if>
+            <if test="telephone!=null">
+                #{telephone},
+            </if>
+            <if test="user_image!=null">
+                #{user_image},
+            </if>
+            <if test="register_time!=null">
+                #{register_time},
+            </if>
+            <if test="position!=null">
+                #{position},
+            </if>
+            <if test="login_time!=null">
+                #{login_time},
+            </if>
+            <if test="identity_type!=null">
+                #{identity_type},
+            </if>
+            <if test="identity_id!=null">
+                #{identity_id},
+            </if>
+            <if test="user_status!=null">
+                #{user_status},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+            <if test="user_type!=null">
+                #{user_type},
+            </if>
+            <if test="height!=null">
+                #{height},
+            </if>
+            <if test="age!=null">
+                #{age},
+            </if>
+            <if test="hobby!=null">
+                #{hobby},
+            </if>
+        </trim>
+    </insert>
+
+    <!--更新操作-->
+    <update id="update" parameterType="com.kol_user.dto.User">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="password!=null">
+                password =#{password},
+            </if>
+            <if test="sex!=null">
+                sex =#{sex},
+            </if>
+            <if test="introduction!=null">
+                introduction =#{introduction},
+            </if>
+            <if test="telephone!=null">
+                telephone=#{telephone},
+            </if>
+            <if test="user_image!=null">
+                user_image=#{user_image},
+            </if>
+            <if test="register_time!=null">
+                register_time= #{register_time},
+            </if>
+            <if test="position!=null">
+                position=#{position},
+            </if>
+            <if test="login_time!=null">
+                login_time= #{login_time},
+            </if>
+            <if test="identity_type!=null">
+                identity_type=#{identity_type},
+            </if>
+            <if test="identity_id!=null">
+                identity_id= #{identity_id},
+            </if>
+            <if test="user_status!=null">
+                user_status=#{user_status},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="user_type!=null">
+                user_type=#{user_type},
+            </if>
+            <if test="height!=null">
+                height=#{height},
+            </if>
+            <if test="age!=null">
+                age=#{age},
+            </if>
+            <if test="hobby!=null">
+                hobby=#{hobby},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <!--批量获取用户信息-->
+    <select id="findInfosByListId" parameterType="java.lang.String" resultMap="UserInfosMap">
+        select id as uid,username as name,introduction as signature,user_image as avatar
+        from
+        <include refid="tablename"/>
+        WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!--首页的模糊搜索-->
+    <select id="searchUserByKeyWord" parameterType="java.lang.String" resultMap="UserInfosMap">
+        SELECT id as uid,username as name,introduction as signature,user_image as avatar
+        FROM
+        <include refid="tablename"/>
+        WHERE id LIKE concat(concat('%',#{param2}),'%') OR username LIKE concat(concat('%',#{param2}),'%')
+    </select>
+
+    <!--新增userCoins中的用户-->
+    <insert id="addUser" parameterType="com.kol_user.dto.UserCoins">
+        INSERT INTO
+        coin.user_coins
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="user_id!=null">
+                user_id,
+            </if>
+            <if test="user_coins!=null">
+                user_coins,
+            </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="user_id!=null">
+                #{user_id},
+            </if>
+            <if test="user_coins!=null">
+                #{user_coins},
+            </if>
+        </trim>
+    </insert>
+
+
+    <!--添加举报信息-->
+    <insert id="addReportInformation" parameterType="com.kol_user.dto.ReportInformation">
+        INSERT INTO
+        report_information
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="uid!=null">
+                uid,
+            </if>
+            <if test="report_id!=null">
+                report_id,
+            </if>
+            <if test="type!=null">
+                type,
+            </if>
+            <if test="describe!=null">
+                `describe`,
+            </if>
+            <if test="image1!=null">
+                image1,
+            </if>
+            <if test="image2!=null">
+                image2,
+            </if>
+            <if test="image3!=null">
+                image3,
+            </if>
+            <if test="telephone!=null">
+                telephone,
+            </if>
+            <if test="QQ!=null">
+                QQ,
+            </if>
+            <if test="time!=null">
+                time,
+            </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="uid!=null">
+                #{uid},
+            </if>
+            <if test="report_id!=null">
+                #{report_id},
+            </if>
+            <if test="type!=null">
+                #{type},
+            </if>
+            <if test="describe!=null">
+                #{describe},
+            </if>
+            <if test="image1!=null">
+                #{image1},
+            </if>
+            <if test="image2!=null">
+                #{image2},
+            </if>
+            <if test="image3!=null">
+                #{image3},
+            </if>
+            <if test="telephone!=null">
+                #{telephone},
+            </if>
+            <if test="QQ!=null">
+                #{QQ},
+            </if>
+            <if test="time!=null">
+                #{time},
+            </if>
+        </trim>
+    </insert>
+</mapper>

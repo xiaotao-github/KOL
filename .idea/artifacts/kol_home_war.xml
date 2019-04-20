@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="kol-home:war">
+    <output-path>$PROJECT_DIR$/kol-home/target</output-path>
+    <root id="archive" name="kol_home.war">
+      <element id="artifact" artifact-name="kol-home:war exploded" />
+    </root>
+  </artifact>
+</component>

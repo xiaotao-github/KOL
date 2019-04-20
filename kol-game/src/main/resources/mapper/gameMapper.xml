@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.xigua.dao.RechargeDao">
+    <sql id="fields">
+        id,game_name,game_cp,version_number,game_introduction,game_image,position,score,state
+    </sql>
+    <sql id="tablename">
+        game
+    </sql>
+    <resultMap id="gameMap" type="com.game.dto.Game">
+        <result property="id" column="id"/>
+        <result property="game_name" column="game_name"/>
+        <result property="game_cp" column="game_cp"/>
+        <result property="version_number" column="version_number"/>
+        <result property="game_introduction" column="game_introduction"/>
+        <result property="game_image" column="game_image"/>
+        <result property="position" column="position"/>
+        <result property="score" column="score"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <!--模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="gameMap">
+        SELECT
+        id,game_name,game_cp,version_number,game_introduction,game_image,position,score,state
+        FROM
+        game
+        <where>
+            <if test="id!=null">
+                id=#{id}
+            </if>
+            <if test="game_name!=null">
+                and game_name like concat(concat('%',#{game_name}),'%')
+            </if>
+            <if test="game_cp!=null">
+                and game_cp=#{game_cp}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <!--不查state=0的数据-->
+            <![CDATA[AND state <> 0]]>
+        </where>
+    </select>
+    <!--精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="gameMap">
+        SELECT
+        id,game_name,game_cp,version_number,game_introduction,game_image,position,score,state
+        FROM
+        game
+        WHERE id=#{id}
+    </select>
+    <!--添加功能-->
+    <insert id="add" parameterType="com.game.dto.Game">
+        INSERT INTO
+        <!--<include refid="tablename"/>-->
+        game
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="game_name!=null">
+                game_name,
+            </if>
+            <if test="game_cp!=null">
+                game_cp,
+            </if>
+            <if test="version_number!=null">
+                version_number,
+            </if>
+            <if test="game_introduction!=null">
+                game_introduction,
+            </if>
+            <if test="game_image!=null">
+                game_image,
+            </if>
+            <if test="position!=null">
+                position,
+            </if>
+            <if test="score!=null">
+                score,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="game_name!=null">
+                #{game_name},
+            </if>
+            <if test="game_cp!=null">
+                #{game_cp},
+            </if>
+            <if test="version_number!=null">
+                #{version_number},
+            </if>
+            <if test="game_introduction!=null">
+                #{game_introduction},
+            </if>
+            <if test="game_image!=null">
+                #{game_image},
+            </if>
+            <if test="position!=null">
+                #{position},
+            </if>
+            <if test="score!=null">
+                score,
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+        </trim>
+    </insert>
+    <!--修改功能-->
+    <update id="update" parameterType="com.game.dto.Game">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="game_name!=null">
+                game_name=#{game_name},
+            </if>
+            <if test="game_cp!=null">
+                game_cp =#{game_cp},
+            </if>
+            <if test="version_number!=null">
+                version_number =#{version_number},
+            </if>
+            <if test="game_introduction!=null">
+                game_introduction =#{game_introduction},
+            </if>
+            <if test="game_image!=null">
+                game_image=#{game_image},
+            </if>
+            <if test="position!=null">
+                position= #{position},
+            </if>
+            <if test="score!=null">
+                score= #{score},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+    <!--删除-->
+    <update id="delete">
+        update
+        <include refid="tablename"/>
+        <set>
+            state=0,
+        </set>
+        WHERE id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+</mapper>

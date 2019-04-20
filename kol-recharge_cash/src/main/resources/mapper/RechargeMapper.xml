@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.recharge_cash.dao.RechargeDao">
+    <sql id="fields">
+        date,order_number,id,username,money,payment,account_balance,operant_hehavior,state
+    </sql>
+    <sql id="tablename">
+        recharge
+    </sql>
+    <resultMap id="rechargeMap" type="com.recharge_cash.dto.Recharge">
+        <result property="date" column="date"/>
+        <result property="order_number" column="order_number"/>
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="money" column="money"/>
+        <result property="payment" column="payment"/>
+        <result property="account_balance" column="account_balance"/>
+        <result property="operant_hehavior" column="operant_hehavior"/>
+        <result property="state" column="state"/>
+    </resultMap>
+
+    <!--模糊查询-->
+    <select id="findByProp" parameterType="java.util.Map"
+            resultMap="rechargeMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        recharge
+        <where>
+            <if test="startDate==null and endDate==null" >
+                date BETWEEN DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 15 DAY),'%Y%m%d') AND DATE_FORMAT(CURDATE(), '%Y%m%d')
+            </if>
+            <if test="startDate!=null and endDate!=null" >
+                DATE_FORMAT(date, '%Y-%m-%d') BETWEEN DATE_FORMAT(#{startDate},'%Y-%m-%d') AND DATE_FORMAT(#{endDate},'%Y-%m-%d')
+            </if>
+            <if test="id!=null">
+                and id=#{id}
+            </if>
+            <if test="username!=null">
+                and username like concat(concat('%',#{username}),'%')
+            </if>
+            <if test="order_number!=null">
+                and order_number=#{order_number}
+            </if>
+            <if test="payment!=null">
+                and payment=#{payment}
+            </if>
+            <if test="state!=null">
+                and state=#{state}
+            </if>
+            <!--不查state=0的数据<![CDATA[AND state = 0]]>-->
+            order by date
+        </where>
+    </select>
+    <!--精确查询-->
+    <select id="findOneById" parameterType="java.lang.String"
+            resultMap="rechargeMap">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        recharge
+        WHERE order_number=#{order_number}
+    </select>
+    <!--添加功能-->
+    <insert id="add" parameterType="com.recharge_cash.dto.Recharge">
+        INSERT INTO
+        <!--<include refid="tablename"/>-->
+        recharge
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="date!=null">
+                date,
+            </if>
+            <if test="order_number!=null">
+                order_number,
+            </if>
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="money!=null">
+                money,
+            </if>
+            <if test="payment!=null">
+                payment,
+            </if>
+            <if test="account_balance!=null">
+                account_balance,
+            </if>
+            <if test="operant_hehavior!=null">
+                operant_hehavior,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="date!=null">
+                #{date},
+            </if>
+            <if test="order_number!=null">
+                #{order_number},
+            </if>
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="money!=null">
+                #{money},
+            </if>
+            <if test="payment!=null">
+                #{payment},
+            </if>
+            <if test="account_balance!=null">
+                #{account_balance},
+            </if>
+            <if test="operant_hehavior!=null">
+                #{operant_hehavior},
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+        </trim>
+    </insert>
+    <!--修改功能-->
+    <update id="update" parameterType="com.recharge_cash.dto.Recharge">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="money!=null">
+                money =#{money},
+            </if>
+            <if test="payment!=null">
+                payment =#{payment},
+            </if>
+            <if test="account_balance!=null">
+                account_balance =#{account_balance},
+            </if>
+            <if test="operant_hehavior!=null">
+                operant_hehavior=#{operant_hehavior},
+            </if>
+            <if test="state!=null">
+                state= #{state},
+            </if>
+        </set>
+        WHERE order_number=#{order_number}
+    </update>
+    <!--删除-->
+    <update id="delete">
+        update
+        <include refid="tablename"/>
+        <set>
+            state=0,
+        </set>
+        WHERE order_number in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{order_number}
+        </foreach>
+    </update>
+    <!--<delete id="delete">-->
+        <!--DELETE FROM room WHERE id in-->
+        <!--<foreach collection="array" item="id" open="(" separator="," close=")">-->
+            <!--#{id}-->
+        <!--</foreach>-->
+    <!--</delete>-->
+</mapper>

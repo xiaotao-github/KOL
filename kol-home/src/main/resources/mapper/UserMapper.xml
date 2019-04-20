@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.home.dao.IUserDao">
+    <sql id="fields">
+        id,username,password
+    </sql>
+    <sql id="tablename">
+        background_user
+    </sql>
+    <resultMap id="myMap" type="com.home.dto.User">
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <!--一对一的映射-->
+        <association property="userRole" javaType="com.home.dto.Role">
+            <!-- property 表示com.mybatis.bean.Class中的属性； column 表示表中的列名 -->
+            <id property="role_id" column="role_id" />
+            <result property="role_name" column="role_name" />
+        </association>
+    </resultMap>
+    <!--1、获取用户以及该用户的角色信息-->
+    <!--可以显示指出u.id,u.username,r.id,r.rolename列名，如果用“*”代替，则mybatis会自动匹配resultMap
+    中提供的列名-->
+    <select id="findUserAndRole" parameterType="java.lang.String" resultMap="myMap">
+      select u.id,u.username,r.role_id,r.role_name
+      from background_role r
+         left join background_user ur
+              on r.role_id=ur.role_id
+         left join t_user u
+              on ur.user_id=u.id
+         where u.username=#{username}
+    </select>
+    <select id="findByName" parameterType="java.lang.String"
+            resultMap="myMap">
+        SELECT
+        id,username,password,role_id
+        FROM
+        user.background_user
+        WHERE username=#{username}
+    </select>
+</mapper>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.recharge_cash.dao.RechargeOrderDao">
+    <sql id="fields">
+        date,order_number,transaction_id,id,username,money,payment,account_balance,operant_hehavior,state,date_end,trade_type,bank_type
+    </sql>
+    <sql id="tablename">
+        recharge
+    </sql>
+    <resultMap id="rechargeMap" type="com.recharge_cash.dto.Recharge">
+        <result property="date" column="date"/>
+        <result property="order_number" column="order_number"/>
+        <result property="transaction_id" column="transaction_id"/>
+        <result property="id" column="id"/>
+        <result property="username" column="username"/>
+        <result property="money" column="money"/>
+        <result property="payment" column="payment"/>
+        <result property="account_balance" column="account_balance"/>
+        <result property="operant_hehavior" column="operant_hehavior"/>
+        <result property="state" column="state"/>
+        <result property="date_end" column="date_end"/>
+        <result property="trade_type" column="trade_type"/>
+        <result property="bank_type" column="bank_type"/>
+    </resultMap>
+
+    <!--新的商户支付宝订单-->
+    <insert id="createRechargeOrder" parameterType="com.recharge_cash.dto.RechargeOrder">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="date!=null">
+                date,
+            </if>
+            <if test="order_number!=null">
+                order_number,
+            </if>
+            <if test="transaction_id!=null">
+                transaction_id,
+            </if>
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="username!=null">
+                username,
+            </if>
+            <if test="money!=null">
+                money,
+            </if>
+            <if test="payment!=null">
+                payment,
+            </if>
+            <if test="account_balance!=null">
+                account_balance,
+            </if>
+            <if test="operant_hehavior!=null">
+                operant_hehavior,
+            </if>
+            <if test="state!=null">
+                state,
+            </if>
+            <if test="date_end!=null">
+                date_end,
+            </if>
+            <if test="trade_type!=null">
+                trade_type,
+            </if>
+            <if test="bank_type!=null">
+                bank_type,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="date!=null">
+                #{date},
+            </if>
+            <if test="order_number!=null">
+                #{order_number},
+            </if>
+            <if test="transaction_id!=null">
+                #{transaction_id},
+            </if>
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="username!=null">
+                #{username},
+            </if>
+            <if test="money!=null">
+                #{money},
+            </if>
+            <if test="payment!=null">
+                #{payment},
+            </if>
+            <if test="account_balance!=null">
+                #{account_balance},
+            </if>
+            <if test="operant_hehavior!=null">
+                #{operant_hehavior},
+            </if>
+            <if test="state!=null">
+                #{state},
+            </if>
+            <if test="date_end!=null">
+                #{date_end},
+            </if>
+            <if test="trade_type!=null">
+                #{trade_type},
+            </if>
+            <if test="bank_type!=null">
+                #{bank_type},
+            </if>
+        </trim>
+    </insert>
+
+    <!--根据id来查-->
+    <select id="selectBytransactionId" parameterType="java.lang.String"
+            resultType="com.recharge_cash.dto.RechargeOrder">
+        SELECT
+        <include refid="fields"/>
+        FROM
+        <include refid="tablename"/>
+        <where>
+            order_number=#{transaction_id}
+        </where>
+    </select>
+
+
+    <!--更新表记录-->
+    <update id="updateByPrimaryKey" parameterType="com.recharge_cash.dto.RechargeOrder">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="date!=null">
+                date=#{date},
+            </if>
+            <if test="transaction_id!=null">
+                transaction_id =#{transaction_id},
+            </if>
+            <if test="id!=null">
+                id =#{id},
+            </if>
+            <if test="username!=null">
+                username=#{username},
+            </if>
+            <if test="money!=null">
+                money=#{money},
+            </if>
+            <if test="payment!=null">
+                payment= #{payment},
+            </if>
+            <if test="account_balance!=null">
+                account_balance=#{account_balance},
+            </if>
+            <if test="operant_hehavior!=null">
+                operant_hehavior= #{operant_hehavior},
+            </if>
+            <if test="state!=null">
+                state=#{state},
+            </if>
+            <if test="date_end!=null">
+                date_end=#{date_end},
+            </if>
+            <if test="trade_type!=null">
+                trade_type= #{trade_type},
+            </if>
+            <if test="bank_type!=null">
+                bank_type=#{bank_type},
+            </if>
+        </set>
+        where order_number=#{order_number}
+    </update>
+</mapper>

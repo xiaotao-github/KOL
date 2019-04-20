@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.coin.dao.GiftOrderDao">
+    <sql id="fields">
+        id,giver_id,accept_id,gift_id,gift_value,give_time,gift_num,totalValue,charmValue,totalCharmValue
+    </sql>
+    <sql id="tablename">
+        gift_order
+    </sql>
+    <!--礼物订单-->
+    <resultMap id="giftOrderMap" type="com.coin.dto.GiftOrder">
+        <result property="id" column="id"/>
+        <result property="giver_id" column="giver_id"/>
+        <result property="accept_id" column="accept_id"/>
+        <result property="gift_id" column="gift_id"/>
+        <result property="gift_value" column="unitPrice"/>
+        <result property="give_time" column="give_time"/>
+        <result property="gift_num" column="gift_num"/>
+        <result property="totalValue" column="totalValue"/>
+        <result property="charmValue" column="charmValue"/>
+        <result property="totalCharmValue" column="totalCharmValue"/>
+        <!--数据库并没有gift_all_value-->
+        <!--<result property="gift_all_value" column="gift_all_value"/>-->
+    </resultMap>
+    <!--排行榜-->
+    <resultMap id="RankingListMap" type="com.coin.dto.RankingList">
+        <result property="uid" column="user_id"/>
+        <result property="name" column="username"/>
+        <result property="avatar" column="user_image"/>
+        <result property="signature" column="introduction"/>
+        <result property="value" column="value"/>
+    </resultMap>
+    <!--礼物-->
+    <resultMap id="giftMap" type="com.coin.dto.UserGift">
+        <result property="gift_id" column="gift_id"/>
+        <result property="gift_img" column="image"/>
+        <result property="gift_name" column="gift_name"/>
+        <result property="gift_price" column="unitPrice"/>
+        <result property="count" column="count"/>
+    </resultMap>
+    <!--X币比例-->
+    <resultMap id="coinRechargeMap" type="com.coin.dto.CoinRecharge">
+        <result property="rechargeId" column="id"/>
+        <result property="coin_price" column="coin_price"/>
+        <result property="coin_amount" column="coin_amount"/>
+    </resultMap>
+
+    <!--送出或收到的礼物列表-->
+    <resultMap id="giftListMap" type="com.coin.dto.GiftList">
+        <result property="uid" column="uid"/>
+        <result property="gift_id" column="gift_id"/>
+        <result property="count" column="gift_num"/>
+        <result property="time" column="give_time"/>
+        <result property="gift_price" column="unitPrice"/>
+        <result property="gift_img" column="image"/>
+        <result property="gift_name" column="gift_name"/>
+        <result property="name" column="username"/>
+        <result property="avatar" column="user_image"/>
+    </resultMap>
+
+
+
+    <!--根据id来获取用户收到的礼物-->
+    <select id="findAcceptGiftByUser" parameterType="java.lang.String" resultMap="giftListMap">
+        SELECT
+        a.giver_id AS uid,a.gift_id,a.gift_num,a.give_time,a.unitPrice,b.`image`,b.`gift_name`,c.username,c.user_image
+        FROM
+        gift_order a,gift b,user.`user` c
+        WHERE a.gift_id=b.id
+        AND a.giver_id=c.id
+        AND a.accept_id = #{user_id}
+        ORDER BY give_time DESC
+    </select>
+
+
+    <!--根据id来获取用户送出的礼物-->
+    <select id="findGiveGiftByUser" parameterType="java.lang.String" resultMap="giftListMap">
+        SELECT
+        a.accept_id AS uid,a.gift_id,a.gift_num,a.give_time,a.unitPrice,b.`image`,b.`gift_name`,c.username,c.user_image
+        FROM
+        gift_order a,gift b,user.`user` c
+        WHERE a.gift_id=b.id
+        AND a.accept_id=c.id
+        AND a.giver_id = #{user_id}
+        ORDER BY give_time DESC
+    </select>
+
+    <!--根据id来获取用户送出的礼物(用于好友主页展示)-->
+    <select id="findGiveGiftByUserToUser" parameterType="java.lang.String" resultMap="giftMap">
+        SELECT
+        a.gift_id,SUM(a.gift_num)AS 'count',a.unitPrice,b.`image`,b.`gift_name`
+        FROM
+        gift_order a,gift b,user.`user` c
+        WHERE a.gift_id=b.id
+        AND a.accept_id=c.id
+        AND a.accept_id = #{user_id}
+        GROUP BY a.gift_id
+    </select>
+
+
+    <!--根据id来查询礼物-->
+    <select id="findGiftById" parameterType="java.lang.String" resultType="com.coin.dto.Gift">
+        select
+        id,gift_name,isHit,coin_type,state,value,image,gif_image,gift_value,charm_value,amount
+        from
+        gift
+        where
+        id=#{id}
+    </select>
+    <!--添加功能-->
+    <insert id="insertOrder" parameterType="com.coin.dto.GiftOrder">
+        INSERT INTO
+        <include refid="tablename"/>
+        -- 对表的字段进行拼接
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                id,
+            </if>
+            <if test="giver_id!=null">
+                giver_id,
+            </if>
+            <if test="accept_id!=null">
+                accept_id,
+            </if>
+            <if test="gift_id!=null">
+                gift_id,
+            </if>
+            <if test="unitPrice!=null">
+                unitPrice,
+            </if>
+            <if test="give_time!=null">
+                give_time,
+            </if>
+            <if test="gift_num!=null">
+                gift_num,
+            </if>
+            <if test="totalValue!=null">
+                totalValue,
+            </if>
+            <if test="charmValue!=null">
+                charmValue,
+            </if>
+            <if test="totalCharmValue!=null">
+                totalCharmValue,
+            </if>
+        </trim>
+        -- 对要插入的值进行拼接
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+            <if test="id!=null">
+                #{id},
+            </if>
+            <if test="giver_id!=null">
+                #{giver_id},
+            </if>
+            <if test="accept_id!=null">
+                #{accept_id},
+            </if>
+            <if test="gift_id!=null">
+                #{gift_id},
+            </if>
+            <if test="unitPrice!=null">
+                #{unitPrice},
+            </if>
+            <if test="give_time!=null">
+                #{give_time},
+            </if>
+            <if test="gift_num!=null">
+                #{gift_num},
+            </if>
+            <if test="totalValue!=null">
+                #{totalValue},
+            </if>
+            <if test="charmValue!=null">
+                #{charmValue},
+            </if>
+            <if test="totalCharmValue!=null">
+                #{totalCharmValue},
+            </if>
+        </trim>
+    </insert>
+
+    <!--魅力榜周榜-->
+    <select id="weekCharm" resultMap="RankingListMap">
+        SELECT
+        u.id  user_id,u.username,u.user_image,u.introduction,r.weekCharm AS VALUE
+        FROM
+        user.user u left join ranking_list r
+        ON u.id=r.uid
+        WHERE r.weekCharm is not NULL
+        order by r.weekCharm desc
+        limit 50
+    </select>
+
+    <!--魅力榜总榜-->
+    <select id="totalCharm" resultMap="RankingListMap">
+        SELECT
+        u.id  user_id,u.username,u.user_image,u.introduction,r.totalCharm AS VALUE
+        FROM
+        user.user u left join ranking_list r
+        ON u.id=r.uid
+        WHERE r.totalCharm is not NULL
+        order by r.totalCharm desc
+        limit 50
+    </select>
+
+    <!--贡献榜周榜-->
+    <select id="weekContribution" resultMap="RankingListMap">
+        SELECT
+        u.id  user_id,u.username,u.user_image,u.introduction,r.weekContribution AS VALUE
+        FROM
+        user.user u left join ranking_list r
+        ON u.id=r.uid
+        WHERE r.weekContribution is not NULL
+        order by r.weekContribution desc
+        limit 50
+    </select>
+
+    <!--贡献榜总榜-->
+    <select id="totalContribution" resultMap="RankingListMap">
+        SELECT
+        u.id  user_id,u.username,u.user_image,u.introduction,r.totalContribution AS VALUE
+        FROM
+        user.user u left join ranking_list r
+        ON u.id=r.uid
+        WHERE r.totalContribution is not NULL
+        order by r.totalContribution desc
+        limit 50
+    </select>
+
+    <!--金币充值界面列表-->
+    <select id="coinRecharge" resultMap="coinRechargeMap">
+        select
+        id as rechargeId,coin_price,coin_amount
+        from
+        recharge_cash.`coin_proportion`
+    </select>
+
+    <!--根据档位id获取充值金额-->
+    <select id="coinRechargeById" parameterType="java.lang.String" resultType="java.lang.Double">
+        select
+        coin_price
+        from
+        recharge_cash.`coin_proportion`
+        where id=#{rechargeId}
+    </select>
+
+    <!--获取礼物值-->
+    <select id="getTotalCharmValue"
+            resultType="java.lang.String">
+         SELECT SUM(totalCharmValue)AS totalCharmValue
+         FROM  coin.`gift_order`
+         WHERE giver_id= #{giver_id}
+    </select>
+</mapper>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--namespace对应接口文件的全限定名
+具体来说：就是我mapper要实现哪个文件.java功能
+-->
+<mapper namespace="com.coin.dao.UserCoinsDao">
+    <sql id="fields">
+        user_id,user_coins
+    </sql>
+    <sql id="tablename">
+        user_coins
+    </sql>
+    <resultMap id="UserCoinsMap" type="com.coin.dto.UserCoins">
+        <result property="user_id" column="user_id"/>
+        <result property="user_coins" column="user_coins"/>
+    </resultMap>
+
+
+    <!--新增用户-->
+    <insert id="addUser" parameterType="com.coin.dto.UserCoins">
+        INSERT INTO
+        user_coins
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="user_id!=null">
+            user_id,
+        </if>
+        <if test="user_coins!=null">
+            user_coins,
+        </if>
+        </trim>
+        <trim prefix="  values(" suffix=")" suffixOverrides=",">
+        <if test="user_id!=null">
+            #{user_id},
+        </if>
+        <if test="user_coins!=null">
+            #{user_coins},
+        </if>
+        </trim>
+    </insert>
+
+
+    <!--获取当前用户的余额-->
+    <select id="getUserCoins" parameterType="java.lang.String" resultMap="UserCoinsMap">
+        select
+        <include refid="fields"/>
+        from
+        <include refid="tablename"/>
+        where user_id=#{user_id}
+    </select>
+    <!--更新用户当前余额-->
+    <update id="updateCoins" parameterType="com.coin.dto.UserCoins">
+        update
+        <include refid="tablename"/>
+        <set>
+            <if test="user_coins!=null">
+                user_coins= #{user_coins}
+            </if>
+        </set>
+        WHERE user_id=#{user_id}
+    </update>
+</mapper>

@@ -1,0 +1,44 @@
+body,p,h1,h2,h3,h4,h5,h6{margin:0;}
+html{
+  -webkit-tap-highlight-color: transparent;  
+  /* :active伪类的元素默认有高亮框，所以设置一下高亮框的颜色伪透明色; */
+  -ms-text-size-adjust: 100%; /* IE浏览器 */
+  -webkit-text-size-adjust: 100%; /* Chrome浏览器 */
+  font-family: 'microsoft yahei';
+}
+body{
+  /*开启moblie网页快速滚动和回弹的效果*/
+  -webkit-overflow-scrolling: touch;
+  font-size: 16px;
+  font-family: 'microsoft yahei';
+  transition: ease;
+  /*user-select:none;*/
+}
+img{border:0;vertical-align: middle;}
+input,select{outline: 0;padding:0;}
+a{text-decoration: none;color:inherit;}
+ul,ol{margin:0;padding:0;list-style: none;}
+
+a,img { 
+  -webkit-touch-callout: none; /* 禁止长按链接与图片弹出菜单 */
+}
+
+/*public*/
+.clearfix:after{
+  display: block;content: '';clear:both;
+}
+.clearfix{
+  *zoom:1;
+}
+
+.fl{float: left;}
+.fr{float: right;}
+
+.icon{
+  display: inline-block;vertical-align: middle;
+  /*-webkit-background-size: contain;background-size: contain;*/
+}
+
+.one-line{
+  text-overflow: ellipsis;overflow: hidden;white-space: nowrap;
+}
